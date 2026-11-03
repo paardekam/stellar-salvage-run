@@ -2,7 +2,7 @@
 
 A colourful low-poly space flyer for Mac and Windows. You're a floating astronaut with a jetpack, salvaging EnergyStars through three zones until the Void Harvester wakes up.
 
-**[Download the latest version](https://github.com/paardekam/stellar-salvage-run/releases/latest)** · [Game website](https://max.paardekam.nl/stellarsalvagerun/)
+**[Download the latest version](https://github.com/paardekam/stellar-salvage-run/releases/latest)** · [Game website](https://stellarsalvagerun.vercel.app)
 
 ![Stellar Salvage Run](screenshot.webp)
 
