@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128">
+<path d="M56 12 L68.98 40.14 L99.75 43.79 L77 64.82 L83.04 95.21 L56 80.08 L28.96 95.21 L35 64.82 L12.25 43.79 L43.02 40.14 Z" fill="none" stroke="#2fd9ff" stroke-opacity="0.22" stroke-width="26" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M56 12 L68.98 40.14 L99.75 43.79 L77 64.82 L83.04 95.21 L56 80.08 L28.96 95.21 L35 64.82 L12.25 43.79 L43.02 40.14 Z" fill="#2fd9ff" stroke="#2fd9ff" stroke-opacity="0.5" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M56 12 L68.98 40.14 L99.75 43.79 L77 64.82 L83.04 95.21 L56 80.08 L28.96 95.21 L35 64.82 L12.25 43.79 L43.02 40.14 Z" fill="#2fd9ff"/>
+<path d="M56 58 L56 12 L68.98 40.14 Z" fill="#b9f5ff"/>
+<path d="M56 58 L43.02 40.14 L56 12 Z" fill="#0f8fd6" fill-opacity="0.55"/>
+<path d="M56 58 L99.75 43.79 L77 64.82 Z" fill="#b9f5ff"/>
+<path d="M56 58 L68.98 40.14 L99.75 43.79 Z" fill="#0f8fd6" fill-opacity="0.55"/>
+<path d="M56 58 L83.04 95.21 L56 80.08 Z" fill="#b9f5ff"/>
+<path d="M56 58 L77 64.82 L83.04 95.21 Z" fill="#0f8fd6" fill-opacity="0.55"/>
+<path d="M56 58 L28.96 95.21 L35 64.82 Z" fill="#b9f5ff"/>
+<path d="M56 58 L56 80.08 L28.96 95.21 Z" fill="#0f8fd6" fill-opacity="0.55"/>
+<path d="M56 58 L12.25 43.79 L43.02 40.14 Z" fill="#b9f5ff"/>
+<path d="M56 58 L35 64.82 L12.25 43.79 Z" fill="#0f8fd6" fill-opacity="0.55"/>
+<path d="M56 12 L68.98 40.14 L99.75 43.79 L77 64.82 L83.04 95.21 L56 80.08 L28.96 95.21 L35 64.82 L12.25 43.79 L43.02 40.14 Z" fill="none" stroke="#0b1233" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="94" cy="96" r="24" fill="#9b4dff" stroke="#0b1233" stroke-width="8"/>
+<circle cx="94" cy="92" r="15" fill="#cf9dff" fill-opacity="0.4"/>
+<path d="M79 90 L89 102 M89 90 L79 102 M96 91 C96 84 109 84 109 91 C109 96 97 100 96 105 H110" fill="none" stroke="#0b1233" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M79 90 L89 102 M89 90 L79 102 M96 91 C96 84 109 84 109 91 C109 96 97 100 96 105 H110" fill="none" stroke="#ffffff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<g transform="translate(-6 -78)"><circle cx="100" cy="100" r="19" fill="#ff7417" stroke="#0b1233" stroke-width="8"/>
+<circle cx="100" cy="96" r="11" fill="#ffd23f" fill-opacity="0.45"/>
+<path d="M92 104 L100 94 L108 104" fill="none" stroke="#0b1233" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M92 104 L100 94 L108 104" fill="none" stroke="#ffffff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/></g>
+</svg>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellar Salvage Run: free space flying game for Mac and Windows</title>
+<meta name="description" content="Fly a floating astronaut through an asteroid field, a purple nebula and an abandoned station. Chain EnergyStars, dodge everything else, and take down the Void Harvester. Free for Mac and Windows.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stellar Salvage Run">
+<meta property="og:description" content="A colourful low-poly space flyer. Free for Mac and Windows.">
+<meta property="og:image" content="https://max.paardekam.nl/stellarsalvagerun/assets/img/og.jpg">
+<meta property="og:url" content="https://max.paardekam.nl/stellarsalvagerun/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0d0e33">
+<link rel="preload" href="assets/fonts/unbounded.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Unbounded";src:url(assets/fonts/unbounded.woff2) format("woff2");font-weight:200 900;font-display:swap}
+@font-face{font-family:"Atkinson";src:url(assets/fonts/atkinson.woff2) format("woff2");font-weight:200 800;font-display:swap}
+@font-face{font-family:"Atkinson";src:url(assets/fonts/atkinson-italic.woff2) format("woff2");font-weight:200 800;font-style:italic;font-display:swap}
+
+:root{
+  --void:#0d0e33;      /* the game's outline navy */
+  --deep:#16134a;
+  --panel:rgba(16,18,62,.86);
+  --cyan:#4fe0ff;      /* shield / info */
+  --violet:#a26bff;    /* magnet / nebula */
+  --boost:#ff9a2e;     /* boost / action */
+  --star:#ffe27a;
+  --ink:#eef0ff;
+  --mist:#b3bbf0;
+  --display:"Unbounded",system-ui,sans-serif;
+  --body:"Atkinson",system-ui,sans-serif;
+  --step--1:.875rem;--step-0:1.0625rem;--step-1:1.375rem;--step-2:1.75rem;--step-3:2.5rem;--step-4:clamp(2.6rem,6vw,4.25rem);
+}
+*{box-sizing:border-box;margin:0}
+html{background:var(--void);color-scheme:dark;scroll-behavior:smooth}
+body{font-family:var(--body);font-size:var(--step-0);line-height:1.55;color:var(--ink);
+  background:
+    radial-gradient(1200px 700px at 85% 110%, rgba(162,107,255,.22), transparent 60%),
+    radial-gradient(900px 600px at -10% 60%, rgba(79,224,255,.10), transparent 60%),
+    linear-gradient(#0d0e33,#120f3f 40%,#0d0e33);
+  overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:var(--cyan)}
+:focus-visible{outline:3px solid var(--star);outline-offset:3px;border-radius:6px}
+.wrap{width:min(1120px,100% - 2.5rem);margin-inline:auto}
+h1,h2,h3{font-family:var(--display);line-height:1.1;letter-spacing:-.01em}
+h2{font-size:var(--step-3);font-weight:800;margin-bottom:.6rem}
+.lede{color:var(--mist);max-width:56ch}
+.skip{position:absolute;left:-999px}.skip:focus{left:1rem;top:1rem;z-index:9;background:var(--star);color:var(--void);padding:.5rem .8rem}
+
+/* ---------- HUD panel: the game's own UI frame ---------- */
+.hud{background:var(--panel);border:3px solid var(--void);border-radius:16px;
+  box-shadow:inset 0 0 0 1.5px rgba(79,224,255,.38), 0 18px 40px -18px rgba(0,0,0,.7)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:min(100svh,900px);display:grid;align-items:end;isolation:isolate}
+.hero__shot{position:absolute;inset:0;z-index:-1}
+.hero__shot img{width:100%;height:100%;object-fit:cover;object-position:58% 45%}
+.hero__shot::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(13,14,51,.94) 0%,rgba(13,14,51,.78) 38%,rgba(13,14,51,0) 68%),
+             linear-gradient(0deg,#0d0e33 0%,rgba(13,14,51,0) 40%)}
+.hero__inner{padding-block:7rem 4.5rem}
+.hero h1{margin:0}
+.hero h1 img{width:min(640px,100%)}
+.tagline{font-family:var(--display);font-weight:500;font-size:var(--step-1);line-height:1.3;margin:1.4rem 0 .6rem;max-width:22ch}
+.hero .lede{max-width:44ch}
+
+.get{display:flex;flex-wrap:wrap;gap:.9rem;margin-top:2rem;align-items:stretch}
+.dl{display:grid;grid-template-columns:auto 1fr;column-gap:.85rem;align-items:center;text-decoration:none;color:var(--ink);
+  padding:.85rem 1.3rem .85rem 1rem;min-width:250px;border-radius:14px;border:3px solid var(--void);
+  background:linear-gradient(#1d2170,#151858);box-shadow:inset 0 0 0 2px var(--cyan),0 10px 24px -12px rgba(79,224,255,.6);
+  transition:transform .15s ease, box-shadow .15s ease}
+.dl svg{grid-row:span 2;width:30px;height:30px}
+.dl b{font-family:var(--display);font-weight:700;font-size:1.06rem}
+.dl small{color:var(--mist);font-size:var(--step--1)}
+.dl:hover{transform:translateY(-2px) scale(1.02);box-shadow:inset 0 0 0 2px var(--cyan),0 14px 30px -10px rgba(79,224,255,.8)}
+.dl.is-primary{background:linear-gradient(#ffb55a,#ff8a1f);color:var(--void);box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 12px 30px -10px rgba(255,154,46,.75)}
+.dl.is-primary small{color:#4a1f00}
+.dl.is-primary:hover{box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 16px 36px -10px rgba(255,154,46,.95)}
+.meta{margin-top:1rem;color:var(--mist);font-size:var(--step--1)}
+.meta a{color:var(--mist)}
+
+/* ---------- route: the run, in order ---------- */
+.route{padding-block:6rem 3rem}
+.route__head{margin-bottom:3.5rem}
+.stops{list-style:none;padding:0;position:relative;display:grid;gap:4.5rem}
+.stops::before{content:"";position:absolute;left:27px;top:28px;bottom:28px;width:6px;border-radius:6px;
+  background:repeating-linear-gradient(180deg,transparent 0 10px,rgba(13,14,51,1) 10px 22px),
+             linear-gradient(var(--cyan),var(--violet) 55%,var(--boost))}
+.stop{display:grid;grid-template-columns:60px 1fr;gap:1.5rem}
+.stop__pin{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.3rem;
+  background:var(--void);border:3px solid var(--c);color:var(--c);box-shadow:0 0 22px -2px var(--c);position:relative;z-index:1}
+.stop__body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:2rem;align-items:center}
+.stop:nth-child(even) .stop__body{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr)}
+.stop:nth-child(even) figure{order:2}
+.stop figure{border-radius:14px;overflow:hidden;border:3px solid var(--void);box-shadow:inset 0 0 0 1.5px var(--c),0 24px 50px -24px var(--c)}
+.stop figure img{aspect-ratio:16/9;object-fit:cover;width:100%}
+.stop h3{font-size:var(--step-2);font-weight:800;color:var(--c);text-shadow:0 0 18px color-mix(in srgb,var(--c) 55%,transparent);margin:.2rem 0 .7rem}
+.stop .zone{font-family:var(--display);font-size:var(--step--1);font-weight:600;color:var(--mist)}
+.stop p{color:var(--mist);max-width:42ch}
+.stop p + p{margin-top:.6rem}
+.stop--1{--c:var(--cyan)} .stop--2{--c:var(--violet)} .stop--3{--c:#7fb8ff} .stop--boss{--c:#ff5a6e}
+.loop{margin:3.5rem 0 0 calc(60px + 1.5rem);color:var(--mist);font-style:italic;max-width:60ch}
+
+/* ---------- loadout ---------- */
+.loadout{padding-block:5rem}
+.loadout__grid{display:grid;grid-template-columns:1.25fr 1fr;gap:1.5rem;margin-top:2.5rem}
+.upgrades{padding:1.6rem}
+.upgrades h3,.side h3{font-size:var(--step-1);font-weight:700;margin-bottom:.4rem}
+.upgrades > p,.side p{color:var(--mist);font-size:var(--step-0)}
+.ups{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:1.3rem}
+.ups li{text-align:center;padding:1rem .5rem;border-radius:12px;background:rgba(13,14,51,.75);border:1.5px solid rgba(162,107,255,.45)}
+.ups img{width:64px;height:64px;margin:0 auto .6rem}
+.ups b{display:block;font-family:var(--display);font-size:.8rem;font-weight:700;line-height:1.25}
+.ups span{display:block;color:var(--mist);font-size:.82rem;margin-top:.3rem;line-height:1.35}
+.side{display:grid;gap:1.5rem}
+.side .hud{padding:1.4rem 1.6rem}
+.suits{display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap}
+.suit{display:flex;align-items:center;gap:.45rem;font-size:.85rem;padding:.35rem .7rem .35rem .4rem;border-radius:99px;background:rgba(13,14,51,.75);border:1.5px solid rgba(179,187,240,.25)}
+.suit i{width:18px;height:18px;border-radius:50%;background:var(--s);box-shadow:0 0 10px var(--s)}
+.shotpair{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem}
+.shotpair figure{border-radius:14px;overflow:hidden;border:3px solid var(--void);box-shadow:inset 0 0 0 1.5px rgba(79,224,255,.38)}
+.shotpair figcaption{font-size:var(--step--1);color:var(--mist);padding:.6rem .9rem;background:var(--panel)}
+
+/* ---------- controls ---------- */
+.controls{padding-block:4rem}
+.keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-top:2rem;list-style:none;padding:0}
+.keys li{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem}
+.cap{display:inline-grid;place-items:center;min-width:2.3rem;height:2.3rem;padding:0 .55rem;border-radius:8px;font-family:var(--display);font-size:.8rem;font-weight:700;
+  background:linear-gradient(#262a7a,#1a1d5c);border:2px solid var(--void);box-shadow:inset 0 -3px 0 rgba(0,0,0,.35),inset 0 0 0 1px rgba(79,224,255,.35);color:var(--ink)}
+.cap--wide{min-width:5.5rem}
+.keys .caps{display:flex;gap:.3rem;flex-wrap:nowrap;flex:none}
+.keys span:last-child{color:var(--mist)}
+
+/* ---------- install ---------- */
+.install{padding-block:5rem 6rem}
+.install__grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2.5rem}
+.install .hud{padding:1.6rem 1.8rem}
+.install h3{font-size:var(--step-1);font-weight:700;display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.install h3 svg{width:26px;height:26px}
+.install ol{padding-left:1.3rem;display:grid;gap:.6rem;color:var(--mist)}
+.install ol ::marker{color:var(--star);font-family:var(--display);font-weight:700}
+.install strong{color:var(--ink)}
+.install .note{margin-top:1.1rem;font-size:var(--step--1);color:var(--mist);border-top:1.5px dashed rgba(179,187,240,.25);padding-top:.9rem}
+
+footer{padding:2.5rem 0 3rem;border-top:1.5px solid rgba(79,224,255,.15);color:var(--mist);font-size:var(--step--1)}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+footer a{color:var(--ink)}
+
+/* ---------- the one moment: logo boosts in ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .hero h1{animation:boostIn .9s cubic-bezier(.2,.9,.25,1.15) .1s both}
+  @keyframes boostIn{from{opacity:0;transform:translateX(-90px) skewX(-12deg);filter:blur(6px)}
+    60%{opacity:1;filter:blur(0)} to{transform:none}}
+}
+@media (prefers-reduced-motion:reduce){.dl{transition:none}.dl:hover{transform:none}html{scroll-behavior:auto}}
+
+/* ---------- small screens ---------- */
+@media (max-width:860px){
+  .stop__body,.stop:nth-child(even) .stop__body{grid-template-columns:1fr;gap:1.1rem}
+  .stop:nth-child(even) figure{order:0}
+  .loadout__grid,.install__grid{grid-template-columns:1fr}
+  .ups{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:560px){
+  .hero__shot::after{background:linear-gradient(0deg,#0d0e33 25%,rgba(13,14,51,.55) 75%,rgba(13,14,51,.3))}
+  .hero__inner{padding-block:5rem 3rem}
+  .dl{min-width:0;width:100%}
+  .stops::before{left:19px}
+  .stop{grid-template-columns:44px 1fr;gap:1rem}
+  .stop__pin{width:44px;height:44px;font-size:1rem}
+  .loop{margin-left:0}
+  .shotpair{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#download">Skip to download</a>
+
+<header class="hero" id="download">
+  <div class="hero__shot"><img src="assets/img/hero.webp" srcset="assets/img/hero_s.webp 960w, assets/img/hero.webp 1920w" sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high"></div>
+  <div class="wrap hero__inner">
+    <h1><img src="assets/img/logo_stellar_salvage_run.svg" alt="Stellar Salvage Run" width="1613" height="260"></h1>
+    <p class="tagline">Fly three zones. Chain the stars. Dodge everything else.</p>
+    <p class="lede">A colourful low-poly space flyer. You're a floating astronaut with a jetpack, salvaging EnergyStars through asteroids, nebula storms and a wrecked station, until something big wakes up.</p>
+
+    <div class="get">
+      <a class="dl" id="dl-mac" href="https://github.com/paardekam/stellar-salvage-run/releases/latest/download/StellarSalvageRun.dmg">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+        <b>Download for Mac</b>
+        <small>.dmg · 65 MB · Apple chip &amp; Intel</small>
+      </a>
+      <a class="dl" id="dl-win" href="https://github.com/paardekam/stellar-salvage-run/releases/latest/download/StellarSalvageRun_Windows.zip">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M2 4.4l8.2-1.1v7.9H2V4.4zm9.2-1.3L22 1.6v9.6H11.2V3.1zM2 12.2h8.2v7.9L2 19V12.2zm9.2 0H22v9.6l-10.8-1.5v-8.1z"/></svg>
+        <b>Download for Windows</b>
+        <small>.zip · 41 MB · Windows 10 &amp; 11</small>
+      </a>
+    </div>
+    <p class="meta">Free. Version 1.0. No account, no ads. <a href="#install">First time opening it?</a> <a href="https://github.com/paardekam/stellar-salvage-run/releases">All versions</a></p>
+  </div>
+</header>
+
+<main>
+  <section class="route wrap" aria-labelledby="route-title">
+    <div class="route__head">
+      <h2 id="route-title">How a run goes</h2>
+      <p class="lede">Every zone lasts a minute. Survive it, pick an upgrade, and fly on into the next one, faster than before.</p>
+    </div>
+
+    <ol class="stops">
+      <li class="stop stop--1">
+        <span class="stop__pin" aria-hidden="true">1</span>
+        <div class="stop__body">
+          <figure><img src="assets/img/shot_field_s.webp" srcset="assets/img/shot_field_s.webp 800w, assets/img/shot_field.webp 1600w" sizes="(max-width:860px) 92vw, 600px" alt="The astronaut boosting through the Asteroid Field with a mission-complete banner" width="1600" height="900" loading="lazy"></figure>
+          <div>
+            <span class="zone">Zone 1</span>
+            <h3>Asteroid Field</h3>
+            <p>Weave between tumbling rocks and space mines. Grab EnergyStars back to back to build a combo, and scrape past danger for near-miss points.</p>
+          </div>
+        </div>
+      </li>
+      <li class="stop stop--2">
+        <span class="stop__pin" aria-hidden="true">2</span>
+        <div class="stop__body">
+          <figure><img src="assets/img/shot_nebula_s.webp" srcset="assets/img/shot_nebula_s.webp 800w, assets/img/shot_nebula.webp 1600w" sizes="(max-width:860px) 92vw, 600px" alt="The Purple Nebula zone, the astronaut inside a glowing ring" width="1600" height="900" loading="lazy"></figure>
+          <div>
+            <span class="zone">Zone 2</span>
+            <h3>Purple Nebula</h3>
+            <p>Glowing gas, laser gates and less room to think. Shield, magnet and boost power-ups float in your path. Each one is a gamble on the line you fly.</p>
+          </div>
+        </div>
+      </li>
+      <li class="stop stop--3">
+        <span class="stop__pin" aria-hidden="true">3</span>
+        <div class="stop__body">
+          <figure><img src="assets/img/shot_station_s.webp" srcset="assets/img/shot_station_s.webp 800w, assets/img/shot_station.webp 1600w" sizes="(max-width:860px) 92vw, 600px" alt="The Abandoned Station zone with drifting debris and a shielded astronaut" width="1600" height="900" loading="lazy"></figure>
+          <div>
+            <span class="zone">Zone 3</span>
+            <h3>Abandoned Station</h3>
+            <p>Broken girders and drifting debris from a station that didn't make it. Finish a zone without a scratch to complete the hardest mission.</p>
+          </div>
+        </div>
+      </li>
+      <li class="stop stop--boss">
+        <span class="stop__pin" aria-hidden="true">!</span>
+        <div class="stop__body">
+          <figure><img src="assets/img/boss_phase3_lasers_s.webp" srcset="assets/img/boss_phase3_lasers_s.webp 800w, assets/img/boss_phase3_lasers.webp 1600w" sizes="(max-width:860px) 92vw, 600px" alt="The Void Harvester boss in its final phase, firing lasers at the astronaut" width="1600" height="900" loading="lazy"></figure>
+          <div>
+            <span class="zone">Boss</span>
+            <h3>The Void Harvester</h3>
+            <p>Fly far enough and it finds you. Your suit fires on its own. Hold space to charge a heavy shot.</p>
+            <p>Three phases: sweeping beams, a mine barrage, then a final stand where only the safe ring keeps you alive.</p>
+          </div>
+        </div>
+      </li>
+    </ol>
+    <p class="loop">Then the zones loop, and everything gets a bit faster. The run ends when your three hearts are gone.</p>
+  </section>
+
+  <section class="loadout wrap" aria-labelledby="loadout-title">
+    <h2 id="loadout-title">Build your run</h2>
+    <p class="lede">Between zones you choose one upgrade. Missions pay out unlock tokens that you spend on new suits.</p>
+
+    <div class="loadout__grid">
+      <div class="hud upgrades">
+        <h3>Upgrades</h3>
+        <p>One pick per cleared zone, stacking for the rest of the run.</p>
+        <ul class="ups">
+          <li><img src="assets/img/icon_upgrade_shield.svg" alt="" width="64" height="64"><b>Longer shield</b><span>Shields last longer</span></li>
+          <li><img src="assets/img/icon_upgrade_magnet.svg" alt="" width="64" height="64"><b>Stronger magnet</b><span>Pulls stars from further away</span></li>
+          <li><img src="assets/img/icon_upgrade_boost.svg" alt="" width="64" height="64"><b>Longer boost</b><span>Less drain, more overdrive</span></li>
+          <li><img src="assets/img/icon_upgrade_multiplier.svg" alt="" width="64" height="64"><b>Score multiplier</b><span>More points on everything</span></li>
+        </ul>
+      </div>
+      <div class="side">
+        <div class="hud">
+          <h3>Missions</h3>
+          <p>Three at a time: collect 40 stars, get 8 near-misses without a hit, reach a ×4 combo. Finish one for bonus score and a token.</p>
+        </div>
+        <div class="hud">
+          <h3>Suits</h3>
+          <p>Swap your look in the Customize menu.</p>
+          <div class="suits">
+            <span class="suit" style="--s:#dfe2e8"><i></i>Classic</span>
+            <span class="suit" style="--s:#6be0ff"><i></i>Cyan Comet</span>
+            <span class="suit" style="--s:#b37aff"><i></i>Nebula Purple</span>
+            <span class="suit" style="--s:#ff9438"><i></i>Solar Orange</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shotpair">
+      <figure><img src="assets/img/shot_upgrade_s.webp" alt="The upgrade choice screen with four upgrade cards" width="800" height="450" loading="lazy"><figcaption>Choosing an upgrade after Zone 1</figcaption></figure>
+      <figure><img src="assets/img/shot_customize_s.webp" alt="The Astronaut Suits menu with four suits" width="800" height="450" loading="lazy"><figcaption>The suit locker</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="controls wrap" aria-labelledby="controls-title">
+    <h2 id="controls-title">Controls</h2>
+    <p class="lede">Keyboard only. You can see them on screen while you play, too.</p>
+    <ul class="keys">
+      <li class="hud"><span class="caps"><span class="cap">A</span><span class="cap">D</span></span><span>Move left and right</span></li>
+      <li class="hud"><span class="caps"><span class="cap">W</span><span class="cap">S</span></span><span>Climb and dive</span></li>
+      <li class="hud"><span class="caps"><span class="cap cap--wide">Space</span></span><span>Boost, or hold to charge a shot in the boss fight</span></li>
+      <li class="hud"><span class="caps"><span class="cap">Esc</span></span><span>Pause</span></li>
+    </ul>
+    <p class="meta">Arrow keys work as well.</p>
+  </section>
+
+  <section class="install wrap" id="install" aria-labelledby="install-title">
+    <h2 id="install-title">Installing</h2>
+    <p class="lede">The game isn't signed by Apple or Microsoft yet, so the first launch needs one extra click. After that it opens like any other app.</p>
+    <div class="install__grid">
+      <div class="hud">
+        <h3><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3.1 1.1.1 2.2-.6 2.9-1.4z"/></svg>Mac</h3>
+        <ol>
+          <li>Open <strong>StellarSalvageRun.dmg</strong>.</li>
+          <li>Drag the game onto the <strong>Applications</strong> folder.</li>
+          <li>The first time, right-click the game in Applications and choose <strong>Open</strong>, then <strong>Open</strong> again.</li>
+        </ol>
+        <p class="note">Still blocked? Go to System Settings → Privacy &amp; Security and click <strong>Open Anyway</strong>.</p>
+      </div>
+      <div class="hud">
+        <h3><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M2 4.4l8.2-1.1v7.9H2V4.4zm9.2-1.3L22 1.6v9.6H11.2V3.1zM2 12.2h8.2v7.9L2 19V12.2zm9.2 0H22v9.6l-10.8-1.5v-8.1z"/></svg>Windows</h3>
+        <ol>
+          <li>Right-click <strong>StellarSalvageRun_Windows.zip</strong> and choose <strong>Extract All</strong>.</li>
+          <li>Open the folder and double-click <strong>Stellar Salvage Run.exe</strong>.</li>
+          <li>If a blue “Windows protected your PC” box appears, click <strong>More info</strong>, then <strong>Run anyway</strong>.</li>
+        </ol>
+        <p class="note">Your progress, tokens and suits are saved automatically.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Made by <a href="https://max.paardekam.nl/">Max Paardekam</a> with Godot and Blender.</span>
+    <span>© 2026 Nuxio</span>
+  </div>
+</footer>
+
+<script>
+/* Put the visitor's own platform first and make it the orange button. */
+(function(){
+  var ua = navigator.userAgent, p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+  var mac = /Mac/i.test(p) || /Macintosh/.test(ua), win = /Win/i.test(p) || /Windows/.test(ua);
+  var m = document.getElementById("dl-mac"), w = document.getElementById("dl-win");
+  if (win) { w.classList.add("is-primary"); w.parentNode.insertBefore(w, m); }
+  else { m.classList.add("is-primary"); }
+})();
+</script>
+</body>
+</html>
