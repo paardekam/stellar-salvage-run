@@ -13,9 +13,9 @@ A colourful low-poly space flyer for Mac and Windows. You're a floating astronau
 | macOS 11+ (Apple chip & Intel) | `StellarSalvageRun.dmg` | Drag the game into Applications |
 | Windows 10 & 11 (64-bit) | `StellarSalvageRun_Windows.zip` | Extract, then run `Stellar Salvage Run.exe` |
 
-The game isn't signed by Apple or Microsoft yet, so the first launch needs one extra click:
+The game isn't registered with Apple or Microsoft yet, so the first launch needs a few extra clicks:
 
-- **Mac:** right-click the game in Applications, choose **Open**, then **Open** again. Still blocked? System Settings → Privacy & Security → **Open Anyway**.
+- **Mac:** open the game once and click **Done** on the warning. Then go to System Settings → Privacy & Security, scroll down and click **Open Anyway**, then **Open**.
 - **Windows:** if "Windows protected your PC" appears, click **More info**, then **Run anyway**.
 
 ## How to play
